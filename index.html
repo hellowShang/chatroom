@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>nickname</title>
+    <script src="http://client.1809a.com/js/jquery.js"></script>
+</head>
+<body>
+    <h1>请输入你的nickname:<input type="text" id="nickname"></input></h1>
+    <script>
+        $(function(){
+            $('#nickname').blur(function(){
+                var nickname = $('#nickname').val();
+                if(nickname == ''){
+                    alert("请填写昵称");
+                    return false;
+                }
+                $.post(
+                    './content.php',
+                    {nickname:nickname},
+                    function(res){
+                        if(res.num=1){
+                            location.href="chatroom.php";
+                        }else{
+                            alert("请填写昵称");
+                        }
+                    }
+                );
+            });
+
+        });
+    </script>
+</body>
+</html>
