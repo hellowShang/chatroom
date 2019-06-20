@@ -34,6 +34,7 @@ $server->on('close', function($server, $fd) {
 
 $server->start();
 
+
 // 建表命令
 //create table chatroom (
 //    id int(10) auto_increment primary key,

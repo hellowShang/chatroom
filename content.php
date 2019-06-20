@@ -1,4 +1,5 @@
 <?php
+
 $nickname = $_POST['nickname']??'';
 if($nickname){
     setcookie('name',$nickname,time()+604800,'/','chat.com',false,true);

@@ -11,7 +11,6 @@
     <input type="text" id="content" style="width: 900px">
     <button id="btn">发送</button>
     <script>
-
         var web = new WebSocket("ws://chat.com:9504");
         web.onopen=function () {
             $("#btn").click(function(){
