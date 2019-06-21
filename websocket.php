@@ -3,6 +3,7 @@ $server = new swoole_websocket_server("0.0.0.0", 9504);
 
 $server->on('open', function($server, $req) {
     echo "connection open: {$req->fd}\n";
+    $server->push($req->fd,json_encode(['id' => $req->fd],JSON_UNESCAPED_UNICODE));
 });
 
 $server->on('message', function($server, $frame) {
@@ -14,16 +15,29 @@ $server->on('message', function($server, $frame) {
     $nickname = $data['name'];
     $ip = $data['ip'];
     $desc = $data['content'];
-    $type = $data['type'];
     $time = time();
+    $id = $data['id'];
+//    echo $id;echo "\n";
+    $er = substr($desc,0,1);
+//    echo $er;echo "\n";
+    if($er == "@"){
+        $type = 2;
+    }else{
+        $type = 1;
+    }
     $db = mysqli_connect('192.168.188.138','root','123123','1809A') or die('打开数据库失败');
     $sql = "insert into chatroom(content,time,name,ip,type) values('$desc','$time','$nickname','$ip','$type')";
     mysqli_set_charset($db,'utf8');
     $res = mysqli_query($db,$sql);
-    foreach($server->connections as $v){
-        //检查连接是否为有效的`WebSocket`客户端连接
-        if($server->isEstablished($v)){
-            $server->push($v,json_encode(['content' => $desc,'nickname' => $nickname,'time' => date('Y-m-d H:i:s',$time)],JSON_UNESCAPED_UNICODE));
+    if($type == 2){
+        $server->push($id,json_encode(['content' => $desc,'nickname' => $nickname,'time' => date('Y-m-d H:i:s',$time),'id' => $frame->fd],JSON_UNESCAPED_UNICODE));
+        $server->push($frame->fd,json_encode(['content' => $desc,'nickname' => $nickname,'time' => date('Y-m-d H:i:s',$time),'id' => $frame->fd],JSON_UNESCAPED_UNICODE));
+    }else{
+        foreach($server->connections as $v){
+            //检查连接是否为有效的`WebSocket`客户端连接
+            if($server->isEstablished($v)){
+                $server->push($v,json_encode(['content' => $desc,'nickname' => $nickname,'time' => date('Y-m-d H:i:s',$time),'id' => $frame->fd],JSON_UNESCAPED_UNICODE));
+            }
         }
     }
 });
