@@ -39,6 +39,7 @@
             $("#btn").click(function(){
                 var content = $("#content").val();
                 var data = '';
+                // 判断是否是私聊
                 if(nickid == ''){
                     data = {content:content,name:name,ip:ip};
                 }else{
